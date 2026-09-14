@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-brand: var(--theme-brand);
+  --color-brand-strong: var(--theme-brand-strong);
+  --color-brand-ink: var(--theme-brand-ink);
+  --color-surface: var(--theme-surface);
+  --color-surface-2: var(--theme-surface-2);
+  --color-border: var(--theme-border);
+  --color-ink: var(--theme-ink);
+  --color-ink-soft: var(--theme-ink-soft);
+  --color-ink-faint: var(--theme-ink-faint);
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --font-display: var(--font-sora);
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  color-scheme: light;
+  --theme-brand: #077a7d;
+  --theme-brand-strong: #065f61;
+  --theme-brand-ink: #ffffff;
+  --theme-surface: #f5eedd;
+  --theme-surface-2: #ffffff;
+  --theme-border: #d8d1bf;
+  --theme-ink: #06202b;
+  --theme-ink-soft: #36545e;
+  --theme-ink-faint: #6d807f;
+  --radius-card: 14px;
+  --shadow-sm: 0 1px 3px rgba(6, 32, 43, 0.12);
+  --shadow-lg: 0 10px 30px rgba(6, 32, 43, 0.12), 0 0 0 1px rgba(6, 32, 43, 0.04);
+  --overlay-soft: rgba(7, 122, 125, 0.06);
+  --overlay-strong: rgba(7, 122, 125, 0.11);
+  --scrollbar: #a9b9b4;
+  --scrollbar-hover: #7f9892;
+}
+
+.dark {
+  color-scheme: dark;
+  --theme-brand: #0ea5e9;
+  --theme-brand-strong: #0284c7;
+  --theme-brand-ink: #ffffff;
+  --theme-surface: #0c1222;
+  --theme-surface-2: #111827;
+  --theme-border: #1e293b;
+  --theme-ink: #f1f5f9;
+  --theme-ink-soft: #94a3b8;
+  --theme-ink-faint: #64748b;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --overlay-soft: rgba(255, 255, 255, 0.05);
+  --overlay-strong: rgba(255, 255, 255, 0.1);
+  --scrollbar: #334155;
+  --scrollbar-hover: #475569;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* Aurora gradient background */
+.aurora {
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 0%, color-mix(in srgb, var(--color-brand) 14%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 10%, color-mix(in srgb, #7ae2cf 16%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 50% 100%, color-mix(in srgb, var(--color-brand) 7%, transparent) 0%, transparent 70%),
+    var(--color-surface);
+}
+
+/* Focus ring */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-brand);
+}
+
+/* Rise animation */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.5s ease-out;
+}
+
+/* Slide up animation for toasts */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.25s ease-out;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.7;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+input,
+select,
+textarea {
+  color-scheme: inherit;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
+}
+
+/* Existing translucent interactions adapt to both color schemes. */
+:root:not(.dark) .bg-white\/5,
+:root:not(.dark) .bg-white\/10 {
+  background-color: var(--overlay-soft);
+}
+
+:root:not(.dark) .bg-white\/10 {
+  background-color: var(--overlay-strong);
+}
+
+:root:not(.dark) .hover\:bg-white\/5:hover {
+  background-color: var(--overlay-soft);
+}
+
+:root:not(.dark) .bg-white\/\[0\.02\],
+:root:not(.dark) .hover\:bg-white\/\[0\.02\]:hover {
+  background-color: rgba(7, 122, 125, 0.035);
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  PRODUCTION_URL: https://enventry-managment-system-for-store.vercel.app
+
+jobs:
+  deploy-production:
+    name: Production Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ env.PRODUCTION_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Pull Vercel Environment Information
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: npx vercel pull --yes --environment=production
+      - name: Build Project Artifacts
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: npx vercel build --prod
+      - name: Deploy to Vercel
+        if: vars.VERCEL_ORG_ID && vars.VERCEL_PROJECT_ID
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: npx vercel deploy --prebuilt --prod
+      - name: Post-deploy smoke test
+        run: |
+          sleep 15
+          curl -sf "${{ env.PRODUCTION_URL }}/api/health" || { echo "Health check failed"; exit 1; }
+          curl -sf "${{ env.PRODUCTION_URL }}/" | head -1 || { echo "Homepage check failed"; exit 1; }
+          echo "Production smoke test passed on ${{ env.PRODUCTION_URL }}"

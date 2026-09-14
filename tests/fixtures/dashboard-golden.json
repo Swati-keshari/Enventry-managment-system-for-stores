@@ -1,0 +1,64 @@
+{
+  "description": "Dashboard aggregation golden fixtures — known inputs and expected outputs",
+  "seed": {
+    "warehouse": { "name": "Test Warehouse" },
+    "items": [
+      { "name": "Wheat", "bag_size": 50 },
+      { "name": "Rice", "bag_size": 30 }
+    ],
+    "party": { "name": "Test Party" },
+    "delivery_orders": [
+      { "do_number": "DO-100", "direction": "IN",  "date": "2026-08-01", "item": "Wheat", "bags": 10, "bag_size": 50, "total_weight": 500 },
+      { "do_number": "DO-101", "direction": "IN",  "date": "2026-08-03", "item": "Wheat", "bags": 5,  "bag_size": 50, "total_weight": 250 },
+      { "do_number": "DO-102", "direction": "OUT", "date": "2026-08-05", "item": "Wheat", "bags": 3,  "bag_size": 50, "total_weight": 150 },
+      { "do_number": "DO-103", "direction": "IN",  "date": "2026-08-02", "item": "Rice",  "bags": 4,  "bag_size": 30, "total_weight": 120 },
+      { "do_number": "DO-104", "direction": "OUT", "date": "2026-08-06", "item": "Rice",  "bags": 2,  "bag_size": 30, "total_weight": 60 }
+    ]
+  },
+  "cases": [
+    {
+      "name": "date_range_08_01_to_08_03",
+      "from": "2026-08-01",
+      "to": "2026-08-03",
+      "expected": [
+        { "product": "Wheat", "total_in": 750, "total_out": 0, "remaining": 600 },
+        { "product": "Rice",  "total_in": 120, "total_out": 0, "remaining": 60 }
+      ]
+    },
+    {
+      "name": "date_range_08_05_to_08_07",
+      "from": "2026-08-05",
+      "to": "2026-08-07",
+      "expected": [
+        { "product": "Wheat", "total_in": 0,   "total_out": 150, "remaining": 600 },
+        { "product": "Rice",  "total_in": 0,   "total_out": 60,  "remaining": 60 }
+      ]
+    },
+    {
+      "name": "full_range_08_01_to_08_07",
+      "from": "2026-08-01",
+      "to": "2026-08-07",
+      "expected": [
+        { "product": "Wheat", "total_in": 750, "total_out": 150, "remaining": 600 },
+        { "product": "Rice",  "total_in": 120, "total_out": 60,  "remaining": 60 }
+      ]
+    }
+  ],
+  "edge_cases": [
+    {
+      "name": "product_only_in",
+      "description": "Product with only IN, no OUT — remaining = total_in",
+      "expected_remaining_equals_total_in": true
+    },
+    {
+      "name": "product_only_out",
+      "description": "Product with only OUT, no IN — remaining is negative or zero",
+      "expected_negative_or_zero": true
+    },
+    {
+      "name": "empty_warehouse",
+      "description": "No transactions at all — all zeros",
+      "expected_all_zeros": true
+    }
+  ]
+}
